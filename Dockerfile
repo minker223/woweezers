@@ -1,18 +1,23 @@
+# Use Eclipse Temurin Java 17 JDK
 FROM eclipse-temurin:17-jdk
 
+# Set working directory inside container
 WORKDIR /app
 
+# Copy all project files into container
 COPY . .
 
+# Make Gradle wrapper executable
 RUN chmod +x gradlew
 
-# Build all modules
-RUN ./gradlew build
+# Build all modules (including core-platform-bungee)
+RUN ./gradlew build --no-daemon
 
-# DEBUG: list all jars to see what gets built
-RUN ls -R backend-rpc-server/build/libs
+# Optional: list all JARs to confirm build
+RUN find . -name "*.jar"
 
+# Expose port for Bungee server
 EXPOSE 8081
 
-# Placeholder CMD so container doesn't exit
-CMD ["sleep", "infinity"]
+# Run the Bungee server JAR
+CMD ["java", "-jar", "core/core-platform-bungee/build/libs/core-platform-bungee.jar"]
