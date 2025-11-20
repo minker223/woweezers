@@ -2,14 +2,11 @@ FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
-# Copy everything
 COPY . .
 
-# Build the server
-RUN ./gradlew shadowJar || ./gradlew.bat shadowJar
+RUN chmod +x gradlew || true
+RUN ./gradlew shadowJar
 
-# Expose default EaglerX port
 EXPOSE 8081
 
-# Command to run the server
 CMD ["java", "-jar", "platform-bungee/build/libs/platform-bungee-all.jar"]
