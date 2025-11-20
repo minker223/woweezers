@@ -9,10 +9,10 @@ RUN chmod +x gradlew
 # Build all modules
 RUN ./gradlew build
 
-# Find the backend server jar
-RUN ls backend-rpc-server/build/libs
-
-# Run backend server
-CMD ["java", "-jar", "backend-rpc-server/build/libs/backend-rpc-server-1.0.jar"]
+# DEBUG: list all jars to see what gets built
+RUN ls -R backend-rpc-server/build/libs
 
 EXPOSE 8081
+
+# Placeholder CMD so container doesn't exit
+CMD ["sleep", "infinity"]
