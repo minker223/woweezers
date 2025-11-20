@@ -4,12 +4,15 @@ WORKDIR /app
 
 COPY . .
 
-# Make gradlew executable (fixes your error)
 RUN chmod +x gradlew
 
-# Build the jar
-RUN ./gradlew shadowJar
+# Build all modules
+RUN ./gradlew build
+
+# Find the backend server jar
+RUN ls backend-rpc-server/build/libs
+
+# Run backend server
+CMD ["java", "-jar", "backend-rpc-server/build/libs/backend-rpc-server-1.0.jar"]
 
 EXPOSE 8081
-
-CMD ["java", "-jar", "platform-bungee/build/libs/platform-bungee-all.jar"]
