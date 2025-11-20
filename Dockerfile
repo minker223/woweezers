@@ -1,26 +1,24 @@
-# Use Java 17 JDK
-FROM eclipse-temurin:17-jdk
+# Use a JDK image to build and run
+FROM gradle:8.3.3-jdk17 AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy all project files
+# Copy all the project files
 COPY . .
 
-# Make Gradle wrapper executable
-RUN chmod +x gradlew
+# Build the main Bungee server JAR (shadowJar includes dependencies)
+RUN ./gradlew :core:core-platform-bungee:shadowJar -x test
 
-# Build all projects
-RUN ./gradlew build
+# Use a smaller JRE image to run the server
+FROM eclipse-temurin:17-jre-alpine
 
-# Find the first jar in core-platform-bungee or backend-rpc-server (or whatever project you want)
-# This avoids hardcoding the exact jar name
-RUN export JAR_FILE=$(find . -type f -name "*core-platform-bungee*.jar" | head -n 1) && \
-    echo "Using jar: $JAR_FILE" && \
-    mv "$JAR_FILE" /app/server.jar
+WORKDIR /app
 
-# Expose port (adjust if needed)
-EXPOSE 8081
+# Copy the built server JAR from the builder
+COPY --from=builder /app/core/core-platform-bungee/build/libs/core-platform-bungee-*-all.jar ./server.jar
 
-# Run the jar
-CMD ["java", "-jar", "/app/server.jar"]
+# Expose default BungeeCord port
+EXPOSE 25577
+
+# Run the server
+CMD ["java", "-jar", "server.jar"]
