@@ -22,9 +22,11 @@ COPY --from=downloader /download/bungee.jar ./bungee.jar
 # Copy your plugins folder (with EaglerXServer.jar inside)
 COPY plugins ./plugins
 
-# Expose the default Eagler/BungeeCord port
+# Expose Render's dynamic port (BungeeCord will listen on it)
 EXPOSE 25577
 
-# Start BungeeCord
+# Start BungeeCord and bind to Render's $PORT
+# If $PORT is not set, fallback to 25577
 CMD ["sh", "-c", "java -jar bungee.jar --port ${PORT:-25577}"]
+
 
