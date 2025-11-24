@@ -26,4 +26,5 @@ COPY plugins ./plugins
 EXPOSE 25577
 
 # Start BungeeCord
-CMD ["java", "-jar", "bungee.jar"]
+CMD ["sh", "-c", "java -jar bungee.jar --port ${PORT:-25577}"]
+
