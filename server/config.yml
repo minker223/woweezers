@@ -1,37 +1,45 @@
-# BungeeCord main configuration for EaglercraftXServer
+# BungeeCord config.yml for EaglercraftXServer
+
 listeners:
-  - query_port: 25577
-    motd: "EaglercraftXServer"
-    tab_list: GLOBAL_PING
-    host: 0.0.0.0:25577
+  - host: 0.0.0.0:25577
+    motd: "EaglercraftXServer on Render"
     max_players: 100
+    tab_list: GLOBAL_PING
+    force_default_server: true
     ping_passthrough: false
-    default_server: lobby
-    force_default_server: false
-    bind_local_address: true
-    tab_size: 60
-    ping_timeout: 30000
-    prioritize_servers: false
-    host_forwarding: true
-    force_proxy_protocol: false
+    proxy_protocol: false
 
 servers:
   lobby:
-    motd: "Welcome to the EaglercraftXServer Lobby!"
-    address: 127.0.0.1:25565
+    host: 127.0.0.1:25565
+    motd: "Welcome to the lobby!"
     restricted: false
 
-ip_forward: true
-network_compression_threshold: 256
+# Leave forced-hosts empty for now
+forced-hosts: {}
+
+# Optional: enable plugins you have
+modules:
+  - reconnect_yaml
+  - cmd_find
+  - cmd_list
+  - cmd_send
+  - cmd_server
+  - cmd_alert
+
 permissions:
-  default: []
-  admin:
+  default:
     - bungeecord.command.server
-    - bungeecord.command.alert
-    - bungeecord.command.end
-log_pings: true
-prevent_proxy_connections: false
-online_mode: false
+    - bungeecord.command.list
+
+online_mode: true
+log_commands: true
 connection_throttle: 4000
-player_limit: -1
-stats: 5c6a8d3a-6f4f-4c2d-b6c3-89a9a5c6e9b1
+
+ip_forward: true
+
+# For Eaglercraft specific settings (optional)
+eagler:
+  skin_cache_db: "jdbc:sqlite:eagler_skins_cache.db"
+  enable_supervisor: true
+
