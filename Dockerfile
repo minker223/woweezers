@@ -1,17 +1,19 @@
-# Build stage
-FROM eclipse-temurin:17-jdk AS builder
+# Build stage  
+FROM eclipse-temurin:17-jdk AS builder  
+WORKDIR /app  
+COPY . .  
+RUN chmod +x gradlew  
 
-WORKDIR /app
-COPY . .
-RUN chmod +x gradlew
-RUN ./gradlew :core:core-platform-bungee:shadowJar -x test
+# Build the core module using ShadowJar  
+RUN ./gradlew :core:shadowJar -x test  
 
-# Run stage
-FROM eclipse-temurin:17-jre-alpine
+# Runtime stage  
+FROM eclipse-temurin:17-jre-alpine  
+WORKDIR /app  
 
-WORKDIR /app
-COPY --from=builder /app/core/core-platform-bungee/build/libs/core-platform-bungee-*-all.jar ./server.jar
+# Copy the shadow JAR from the build output  
+COPY --from=builder /app/core/build/libs/core-*-all.jar ./server.jar  
 
-EXPOSE 25577
+EXPOSE 25577  
 
 CMD ["java", "-jar", "server.jar"]
