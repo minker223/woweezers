@@ -1,15 +1,29 @@
-FROM eclipse-temurin:17-jdk AS builder
-WORKDIR /app
-COPY . .
+# -------------------------------------------------
+# Stage 1: Download BungeeCord
+# -------------------------------------------------
+FROM eclipse-temurin:17-jre-alpine AS downloader
 
-RUN chmod +x gradlew
-RUN ./gradlew :backend-server:shadowJar -x test
+WORKDIR /download
 
+# Install curl and download the official BungeeCord jar
+RUN apk add --no-cache curl && \
+    curl -L -o bungee.jar https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
+
+# -------------------------------------------------
+# Stage 2: Final Runtime Image
+# -------------------------------------------------
 FROM eclipse-temurin:17-jre-alpine
-WORKDIR /app
 
-COPY --from=builder /app/backend-server/build/libs/*-all.jar ./server.jar
+WORKDIR /server
 
-EXPOSE 8081
+# Copy BungeeCord from the previous stage
+COPY --from=downloader /download/bungee.jar ./bungee.jar
 
-CMD ["java", "-jar", "server.jar"]
+# Copy your plugins folder (with EaglerXServer.jar inside)
+COPY plugins ./plugins
+
+# Expose the default Eagler/BungeeCord port
+EXPOSE 25577
+
+# Start BungeeCord
+CMD ["java", "-jar", "bungee.jar"]
