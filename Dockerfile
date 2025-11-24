@@ -16,7 +16,7 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /server
 
-# Install tiny HTTP server to satisfy Render's health check
+# Install tiny HTTP server for health checks
 RUN apk add --no-cache busybox-extras
 
 # Copy BungeeCord from previous stage
@@ -26,9 +26,8 @@ COPY --from=downloader /download/bungee.jar ./bungee.jar
 COPY plugins ./plugins
 
 # Expose ports
-# 25577 → EaglerX/BungeeCord
-# 10000 → HTTP health check
 EXPOSE 25577 10000
 
-# Start both servers: game server + tiny HTTP server for health check
-CMD sh -c "java -jar bungee.jar --port 25577 & httpd -f -p 10000 -h /server"
+# Start both servers: game server + HTTP health check
+# Render will hit ${PORT} for the health check
+CMD sh -c "java -jar bungee.jar --port 25577 & while true; do echo 'HTTP/1.1 200 OK\n\nOK' | nc -l -p ${PORT:-10000}; done"
