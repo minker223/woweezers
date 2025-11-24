@@ -1,0 +1,37 @@
+# BungeeCord main configuration for EaglercraftXServer
+listeners:
+  - query_port: 25577
+    motd: "EaglercraftXServer"
+    tab_list: GLOBAL_PING
+    host: 0.0.0.0:25577
+    max_players: 100
+    ping_passthrough: false
+    default_server: lobby
+    force_default_server: false
+    bind_local_address: true
+    tab_size: 60
+    ping_timeout: 30000
+    prioritize_servers: false
+    host_forwarding: true
+    force_proxy_protocol: false
+
+servers:
+  lobby:
+    motd: "Welcome to the EaglercraftXServer Lobby!"
+    address: 127.0.0.1:25565
+    restricted: false
+
+ip_forward: true
+network_compression_threshold: 256
+permissions:
+  default: []
+  admin:
+    - bungeecord.command.server
+    - bungeecord.command.alert
+    - bungeecord.command.end
+log_pings: true
+prevent_proxy_connections: false
+online_mode: false
+connection_throttle: 4000
+player_limit: -1
+stats: 5c6a8d3a-6f4f-4c2d-b6c3-89a9a5c6e9b1
